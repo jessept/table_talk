@@ -12,3 +12,5 @@ Once confluent is installed, make sure you have the following running
 ./bin/schema-registry-start ./etc/schema-registry/schema-registry.properties
 
 ./bin/kafka-rest-start ./etc/kafka-rest/kafka-rest.properties
+
+You can install by running "pip install git+git://github.com/jessept/table_talk.git" 
