@@ -32,7 +32,7 @@ class KafkaChat(KafkaClient):
             sys.stdout.write('\nSuccessfully opened personal channel, you will see all private messages here\n'
                              'To privately message another person, post to their channel by using BLA BLA BLA')
         else:
-            sys.stdout.write(('Successfully opened channel {}, you can start messaging now'.format(self._topic)))
+            sys.stdout.write(('Successfully opened channel {}'.format(self._topic)))
         while True:
             user = self._name
             response = input("\n{0}: ".format(user))

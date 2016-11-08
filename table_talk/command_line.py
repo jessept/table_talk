@@ -23,10 +23,7 @@ def main():
     elif user_list_flag:
         connection.parse_commands('users')
     else:
-        print('Starting up app!')
-        for sec in range(5, 0, -1):
-            time.sleep(0.5)
-            print('{}'.format(sec))
+        print('Starting up table_talk')
         connection.open_chat_session()
 
 if __name__ == '__main__':
