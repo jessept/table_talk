@@ -15,10 +15,11 @@ In order for it to work, Kafka's REST API needs to be installed and working, so 
 
 # Installing table_talk
 
-Simply run "pip install git+git://github.com/jessept/table_talk.git" 
+pip install git+git://github.com/jessept/table_talk.git
 
 # Examples
 
 table_talk -t test_channel
+
 Successfully opened channel test_channel
 
