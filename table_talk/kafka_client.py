@@ -4,14 +4,14 @@ import requests
 import json
 import sys
 
-# TODO
-# 5.) Python package = setup.py etc.
+
 # 6.) Testing
 
 class KafkaClient:
     def __init__(self, topic='', host='http://localhost:8082', name=getpass.getuser()):
         self._host = host
         self._headers = {'Content-Type': 'application/vnd.kafka.json.v1+json',}
+        self._headers_accept = {'Accept': 'application/vnd.kafka.json.v1+json',}
         self._name = name
         self._topic = self.get_topic(topic)
         self._new = self.check_new()
@@ -47,22 +47,33 @@ class KafkaClient:
         consumer = KafkaConsumer(topic)
         return consumer
 
-    def read_from_topic(self):
+    def create_topic(self):
+        #data_dict = {"records": [{"value": {'user': self._name, 'message': 'Starting Channel {}'.format(self._topic)}}]}
+        #msg = json.dumps(data_dict)
+        data = '{"name": "my_consumer_instance", "format": "json", "auto.offset.reset": "smallest"}'
+        resp = requests.post('{0}/consumers/my_json_consumer'.format(self._host), headers=self._headers, data=data)
+        #api_response = requests.post('{0}/topics/{1}'.format(self._host, self._topic), headers=self._headers, data=msg)
+        return resp
+
+    def read_from_topic(self, out=sys.stdout, max_messages=1e10):
         if self._new:
-            data_dict = {"records": [{"value": {'user': self._name, 'message': 'Starting Channel {}'.format(self._topic)}}]}
-            msg = json.dumps(data_dict)
-            requests.post('{0}/topics/{1}'.format(self._host, self._topic), headers=self._headers, data=msg)
-        consumer = self._consumer
+            self.create_topic()
+        # consumer = self._consumer
         name = self._name
-        for message in consumer:
-            processed_message = json.loads(message.value.decode("utf-8"))
-            message = processed_message['message']
-            user = processed_message['user']
-            if user == name:
-                pass
-            else:
-                sys.stdout.write(('\n{0}: {1}\n'.format(user, message)))
-                sys.stdout.flush()
+        while max_messages:
+            f = requests.get(
+                '{0}/consumers/my_json_consumer/instances/my_consumer_instance/topics/{1}'.format(self._host,
+                                                                                                  self._topic),
+                headers=self._headers_accept)
+            for message in f.json():
+                user = message['value']['user']
+                chat = message['value']['message']
+                if user == name:
+                    pass
+                else:
+                    out.write(('\n{0}: {1}\n'.format(user, chat)))
+                    out.flush()
+            max_messages -= 1
 
     def post_to_topic(self, message):
         user = self._name
@@ -70,11 +81,3 @@ class KafkaClient:
         msg = json.dumps(msg_dict)
         response = requests.post('{0}/topics/{1}'.format(self._host, self._topic), headers=self._headers, data=msg)
         return response
-
-
-
-
-
-
-
-

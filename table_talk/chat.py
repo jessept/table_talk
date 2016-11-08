@@ -17,42 +17,42 @@ class KafkaChat(KafkaClient):
                                         'function': self.show_users}
                               }
 
-    def parse_commands(self, command):
+    def parse_commands(self, command, out=sys.stdout):
         com_dict = self._command_dict
         if com_dict.get(command, {'None': 'None'}) != {'None': 'None'}:
             self.post_to_topic(com_dict[command]['post'])
-            sys.stdout.write(com_dict[command]['print'])
+            out.write(com_dict[command]['print'])
             com_dict[command]['function']()
         else:
             pass
 
-    def open_chat_session(self):
+    def open_chat_session(self, out=sys.stdout):
         _thread.start_new_thread(self.read_from_topic, ())
         if self._topic == self._name:
-            sys.stdout.write('\nSuccessfully opened personal channel, you will see all private messages here\n'
+            out.write('\nSuccessfully opened personal channel, you will see all private messages here\n'
                              'To privately message another person, post to their channel by using BLA BLA BLA')
         else:
-            sys.stdout.write(('Successfully opened channel {}'.format(self._topic)))
+            out.write(('Successfully opened channel {}'.format(self._topic)))
         while True:
             user = self._name
             response = input("\n{0}: ".format(user))
             self.parse_commands(response)
             self.post_to_topic(response)
 
-    def show_channels(self):
+    def show_channels(self, out=sys.stdout):
         channels = self.get_current_topics()
 
         for channel in channels:
             if channel[:5] != 'user-':
-                sys.stdout.write(channel + '\n')
+                out.write(channel + '\n')
             else:
                 pass
 
-    def show_users(self):
+    def show_users(self, out=sys.stdout):
         channels = self.get_current_topics()
         for channel in channels:
             if channel[:5] == 'user-':
-                sys.stdout.write(channel + '\n')
+                out.write(channel + '\n')
             else:
                 pass
 
