@@ -1,4 +1,4 @@
-from chat import KafkaChat
+from table_talk.chat import KafkaChat
 import time
 import argparse
 parser = argparse.ArgumentParser(description='Chat via local Kafka instance.')

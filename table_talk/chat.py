@@ -1,4 +1,4 @@
-from KafkaClient import KafkaClient
+from table_talk.kafka_client import KafkaClient
 import sys
 import _thread
 
